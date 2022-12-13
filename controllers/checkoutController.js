@@ -148,3 +148,47 @@ export const thankYou = async (request, response)=>{
     data["infomessages"] = infomessages;
     return response.render("frontend/thankyou",data);    
 }
+
+export const stripewebhook = async(request, response) => {
+    const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
+    const sig = request.headers['stripe-signature'];
+    let event;
+    try {
+        event = await stripe(process.env.STRIPE_SECRET_KEY).webhooks.constructEvent(request.body, sig, endpointSecret);
+        console.log(event);
+    } catch (err) {
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+
+    // Handle the event
+    let charge = "";
+    switch (event.type) {
+        case 'charge.captured':
+        charge = event.data.object;
+        // Then define and call a function to handle the event charge.captured
+        break;
+        case 'charge.failed':
+        charge = event.data.object;
+        // Then define and call a function to handle the event charge.failed
+        break;
+        case 'charge.pending':
+        charge = event.data.object;
+        // Then define and call a function to handle the event charge.pending
+        break;
+        case 'charge.refunded':
+        charge = event.data.object;
+        // Then define and call a function to handle the event charge.refunded
+        break;
+        case 'charge.succeeded':
+        charge = event.data.object;
+        // Then define and call a function to handle the event charge.succeeded
+        break;
+        // ... handle other event types
+        default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+}

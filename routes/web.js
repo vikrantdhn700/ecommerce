@@ -54,6 +54,7 @@ router.post('/cart/delete',cartController.deleteCart);
 router.get('/checkout',checkoutController.checkout);
 router.post('/checkout',checkoutController.checkoutSave);
 router.get('/order/thankyou/:id',isUserAuth,checkoutController.thankYou);
+router.post('/order/stripewebhook',checkoutController.stripewebhook);
 router.get('/auth/my-account/',isUserAuth,myaccountController.myaccount);
 router.post('/auth/my-account/',isUserAuth,myaccountController.myaccount);
 router.get('/auth/orders/',isUserAuth,myaccountController.orders);
