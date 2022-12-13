@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title><%= pagetitle %></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <%- include('./partials/head') -%>
+</head>
+<%
+serializeObject = function(obj) {
+    var str = "";
+    for(var i = 0; i < Object.keys(obj).length; i++) {
+        key = Object.keys(obj)[i];
+        if (i === Object.keys(obj).length - 1)
+            str += encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]);
+        else
+            str += encodeURIComponent(key) + "=" +  encodeURIComponent(obj[key]) + "&";
+    }
+    return str;
+}
+%>
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Sidebar Start -->
+        <%- include('./partials/sidebar') -%>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <%- include('./partials/header-nav') -%>
+            <!-- Navbar End -->
+
+            <!-- Middle HTML Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                        <form action="" method="GET">
+                            <div class="row g-3">
+                                <div class="col-sm-4">
+                                    <label>Search</label>
+                                    <input type="search" class="form-control" name="q" placeholder="Search" aria-label="Search" value="<%= (queryString.q) ? queryString.q : '' %>">
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Sort By</label>
+                                    <select class="form-select" name="sortby">
+                                        <option value="">Default</option>
+                                        <option value="name" <%= (queryString.sortby == "name" ) ? 'selected' : '' %>>Name</option>
+                                        <option value="email" <%= (queryString.sortby == "email" ) ? 'selected' : '' %>>Email</option>
+                                        <option value="phone" <%= (queryString.sortby == "phone" ) ? 'selected' : '' %>>Phone</option>
+                                        <option value="createdAt" <%= (queryString.sortby == "createdAt" ) ? 'selected' : '' %>>createdAt</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Order By</label>
+                                    <select class="form-select" name="orderby">
+                                        <option value="desc" <%= (queryString.orderby == "desc" ) ? 'selected' : '' %>>Desc</option>
+                                        <option value="asc" <%= (queryString.orderby == "asc" ) ? 'selected' : '' %>>Asc</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info mt-4">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4"><%= pagetitle %></h6>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Phone</th>
+                                            <th scope="col">Created</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%
+                                             if(typeof results != 'undefined' && results[0].data.length > 0){ 
+                                                results[0].data.forEach(function(row, index){
+                                        %>
+                                        <tr>
+                                            <th scope="row"><%= (results[0].limit * (results[0].page - 1)) + index + 1 %></th>
+                                            <td><%= row.name %></td>
+                                            <td><%= row.email %></td>
+                                            <td><%= row.phone %></td>
+                                            <td><%= new Date(row.createdAt).toLocaleString() %></td>
+                                            <td><a href="/admin/user/edit/<%= row.id %>" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></a><a href="<%= originalUrl %>" data-id="<%= row.id %>" class="btn btn-warning btn-sm ms-1 deleteuser"><i class="fa fa-trash"></i></a></td>
+                                        </tr>
+                                        <% }) } %>
+                                    </tbody>
+                                </table>
+                                <%  if (typeof results != 'undefined' && results[0].pages > 0) { %>
+                                    <% 
+                                        var key = "page";
+                                        queryString[key] = null;
+                                        delete queryString[key];
+                                        var slctdQryString =  serializeObject(queryString) 
+                                    %>
+                                    <ul class="pagination text-center">
+                                        <% if (results[0].page == 1) { %>
+                                            <li class="disabled page-item"><a class="page-link">First</a></li>
+                                        <% } else { %>
+                                            <li class="page-item"><a href="/admin/users/?page=1<%= `&${slctdQryString}` %>" class="page-link">First</a></li>
+                                        <% } %>
+                                        <% var i = (Number(results[0].page) > 5 ? Number(results[0].page) - 4 : 1) %>
+                                        <% if (i !== 1) { %>
+                                            <li class="disabled page-item"><a class="page-link">...</a></li>
+                                        <% } %>
+                                        <% for (; i <= (Number(results[0].page) + 4) && i <= results[0].pages; i++) { %>
+                                            <% if (i == results[0].page) { %>
+                                                <li class="active page-item"><a class="page-link"><%= i %></a></li>
+                                            <% } else { %>
+                                                <li class="page-item"><a href="/admin/users/?page=<%= i %><%= `&${slctdQryString}` %>" class="page-link"><%= i %></a></li>
+                                            <% } %>
+                                            <% if (i == Number(results[0].page) + 4 && i < results[0].pages) { %>
+                                                <li class="disabled page-item"><a class="page-link">...</a></li>
+                                            <% } %>
+                                        <% } %>
+                                        <% if (results[0].page == results[0].pages) { %>
+                                            <li class="disabled page-item"><a class="page-link">Last</a></li>
+                                        <% } else { %>
+                                            <li class="page-item"><a href="/admin/users/?page=<%= results[0].pages %><%= `&${slctdQryString}` %>" class="page-link">Last</a></li>
+                                        <% } %>
+                                    </ul>
+                                <% }  %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Middle HTML End -->
+
+
+            <!-- Footer Start -->
+            <%- include('./partials/footer') -%>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        
+    </div>
+   
+    <!-- JavaScript Libraries -->
+    <script>
+        document.querySelectorAll('.deleteuser').forEach(item => {
+            item.addEventListener('click', async (event) => {
+                event.preventDefault();
+                if (confirm("Are you sure want to delete!") == true) {
+                    let delid = item.getAttribute("data-id");
+                    try{
+                        let response = await fetch('<%= process.env.SITE_URL %>/admin/user/delete/'+delid, {
+                            method: 'DELETE',
+                        }).then((response)=> response.json())
+                        .then((data) => {
+                            if(data.status=="success"){
+                                let href = item.getAttribute("href");
+                                window.location.href = href;
+                            } else {
+                               alert(data.message);
+                            }
+                        });
+                    } catch(error) {
+                        console.log(error);
+                    }
+                }
+            })
+        })
+
+    </script>
+    <%- include('./partials/footer-script') -%>
+    
+</body>
+
+</html>

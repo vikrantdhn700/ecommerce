@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+  <script>
+    var stripe_publish_key = '<%= getsetting.stripe_pk %>';
+  </script>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="single-product">
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <section class="detail_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="heading_container text-center">
+            <h2><%= pagetitle %></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="checkout_section my-5">
+  <div class="container">    
+    <div class="row">
+        <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your cart</span>
+                <span class="badge badge-secondary badge-pill"><% if(cart && cart.items.length > 0){ %>
+                    <%= cart.items.length %>
+                  <% } else { %>
+                    0
+                  <% } %></span>
+            </h4>
+            <ul class="list-group mb-3 sticky-top">
+                <% cart.items.forEach(function(row, index){
+                    let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                    if(row.image !== null) {
+                        if(row.image){
+                            imgLink = row.image.replace(/\\/g, '/');
+                            imgLink= imgLink.split( 'public/' ).join( '/' );
+                        }
+                    }
+                  %>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0"><a href="/product/detail/<%= row.slug %>"><%= row.name %></a> x <%= row.quantity %></h6>
+                        <!-- <small class="text-muted">Brief description</small> -->
+                    </div>
+                    <span class="text-muted">$<% if(row.price && !row.price.$numberDecimal) { var price = row.price; } else if(row.price.$numberDecimal){ var price = row.price.$numberDecimal; } %><%= price * row.quantity %></span>
+                </li>
+                <% }) %>
+                <!-- <li class="list-group-item d-flex justify-content-between bg-light">
+                    <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small>EXAMPLECODE</small>
+                    </div>
+                    <span class="text-success">-$5</span>
+                </li> -->
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>$<%= cart.total %></strong>
+                </li>
+            </ul>
+            <!-- <form class="card p-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Promo code">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-secondary">Redeem</button>
+                    </div>
+                </div>
+            </form> -->
+        </div>
+        <div class="col-md-8 order-md-1">
+            <div id="checkout_error"></div>
+            <h4 class="mb-3">Billing address</h4>
+            <form id="form-checkout" class="needs-validation" novalidate="" action="" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName">First name</label>
+                        <input type="text" class="form-control" id="firstName" name="billing_firstname" placeholder="" value="" required="">
+                        <div class="invalid-feedback"> Valid first name is required. </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName">Last name</label>
+                        <input type="text" class="form-control" id="lastName" name="billing_lastname" placeholder="" value="" required="">
+                        <div class="invalid-feedback"> Valid last name is required. </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="billing_email" placeholder="you@example.com">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="billing_phone" placeholder="">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="billing_address" placeholder="1234 Main St" required="">
+                    <div class="invalid-feedback"> Please enter your shipping address. </div>
+                </div>
+                <div class="mb-3">
+                    <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                    <input type="text" class="form-control" id="address2" name="billing_address2" placeholder="Apartment or suite">
+                </div>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="country">Country</label>
+                        <select class="custom-select d-block w-100" id="country" name="billing_country" required="">
+                            <option value="">Choose...</option>
+                            <option>United States</option>
+                        </select>
+                        <div class="invalid-feedback"> Please select a valid country. </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="state">State</label>
+                        <select class="custom-select d-block w-100" id="state" name="billing_state" required="">
+                            <option value="">Choose...</option>
+                            <option>California</option>
+                        </select>
+                        <div class="invalid-feedback"> Please provide a valid state. </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="zip">Zip</label>
+                        <input type="text" class="form-control" id="zip" name="billing_zip" placeholder="" required="">
+                        <div class="invalid-feedback"> Zip code required. </div>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="same-address" name="same_address" checked>
+                    <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
+                </div>                              
+                <div class="" id="shipping-bx" style="display: none;">
+                <hr class="mb-4"> 
+                <h4 class="mb-3">Shipping address</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName">First name</label>
+                        <input type="text" class="form-control" id="firstName" name="shipping_firstname"  placeholder="" value="" required="">
+                        <div class="invalid-feedback"> Valid first name is required. </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName">Last name</label>
+                        <input type="text" class="form-control" id="lastName" name="shipping_lastname" placeholder="" value="" required="">
+                        <div class="invalid-feedback"> Valid last name is required. </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="shipping_email" placeholder="you@example.com">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="shipping_phone" placeholder="">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="shipping_address" placeholder="1234 Main St" required="">
+                    <div class="invalid-feedback"> Please enter your shipping address. </div>
+                </div>
+                <div class="mb-3">
+                    <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                    <input type="text" class="form-control" id="address2" name="shipping_address2" placeholder="Apartment or suite">
+                </div>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="country">Country</label>
+                        <select class="custom-select d-block w-100" id="country" name="shipping_country" required="">
+                            <option value="">Choose...</option>
+                            <option>United States</option>
+                        </select>
+                        <div class="invalid-feedback"> Please select a valid country. </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="state">State</label>
+                        <select class="custom-select d-block w-100" id="state" name="shipping_state" required="">
+                            <option value="">Choose...</option>
+                            <option>California</option>
+                        </select>
+                        <div class="invalid-feedback"> Please provide a valid state. </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="zip">Zip</label>
+                        <input type="text" class="form-control" id="zip" name="shipping_zip" placeholder="" required="">
+                        <div class="invalid-feedback"> Zip code required. </div>
+                    </div>
+                </div>
+            </div>
+                <hr class="mb-4">
+                <h4 class="mb-3">Payment</h4>
+                <div class="d-block my-3">
+                    <div class="custom-control custom-radio">
+                        <input id="stripe" name="paymentMethod" type="radio" class="custom-control-input" value="stripe" checked="" required="">
+                        <label class="custom-control-label" for="stripe">Stripe</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="cashondelivery" name="paymentMethod" type="radio" class="custom-control-input" value="cashondelivery" required="">
+                        <label class="custom-control-label" for="cashondelivery">Cash on delivery</label>
+                    </div>
+                </div>
+                <div id="paymnt_stripe" class="paymnt_option">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cc-number">Credit card number</label>
+                            <div id="card_number" class="field form-control"></div>                        
+                            <div class="invalid-feedback"> Credit card number is required </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="cc-expiration">Expiration</label>
+                            <div id="card_expiry" class="field form-control"></div>                        
+                            <div class="invalid-feedback"> Expiration date required </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="cc-cvv">CVV</label>
+                            <div id="card_cvc" class="field form-control"></div>
+                            <div class="invalid-feedback"> Security code required </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><div id="paymentResponse"></div></div>                    
+                    </div>
+                </div>
+                <div id="paymnt_cashondelivery" class="paymnt_option" style="display: none;">
+                    <div class="alert alert-info" role="alert">
+                        Pay order amount on deliver to you.
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-secondary btn-lg btn-block" type="submit">Continue to checkout</button>
+                <input type="hidden" name="save_type" value="_checkoutsave_nonce">
+                <input type="hidden" name="nonce" value="<%= nonce %>">
+            </form>
+        </div>
+    </div>
+  </div>
+</section>
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+  <script type="text/javascript">
+	// Set your publishable API key
+	var stripe = Stripe('<%= getsetting.stripe_pk %>');
+	// Create an instance of elements
+	var elements = stripe.elements();
+	var style = {
+	    base: {
+	        fontWeight: 400,
+	        fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+	        fontSize: '1rem',
+	        lineHeight: '1.4',     
+	        border: 'none',
+	        borderRadius: '5px',
+	        boxShadow: 'inset 0 0 0 transparent',
+	        transition: 'border-color .15s ease-in-out,box-shadow .15s ease-in-out',
+	        padding: '15rem',
+	        height: '5rem',
+	        lineHeight: '1.5',
+	        '::placeholder': {
+	            color: '#888',
+	        },
+	    },
+	    invalid: {
+	        color: '#eb1c26',
+	    }
+	};
+
+	var cardElement = elements.create('cardNumber', {
+	    style: style
+	});
+	cardElement.mount('#card_number');
+
+	var exp = elements.create('cardExpiry', {
+	    'style': style
+	});
+
+	exp.mount('#card_expiry');
+
+	var cvc = elements.create('cardCvc', {
+	    'style': style
+	});
+	cvc.mount('#card_cvc');
+
+	// Validate input of the card elements
+	var resultContainer = document.getElementById('paymentResponse');
+	cardElement.addEventListener('change', function(event) {
+	    if (event.error) {
+	        resultContainer.innerHTML = '<div class="alert alert-danger" role="alert">'+event.error.message+'</div>';
+	    } else {
+	        resultContainer.innerHTML = '';
+	    }
+	});
+</script>
+<%- include('./partials/footer-script') -%>
+</body>
+</html>

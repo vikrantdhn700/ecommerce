@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title><%= pagetitle %></title>
+
+  <%- include('./partials/head') -%>
+</head>
+
+<body>
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <section class="find_section layout_padding-bottom">
+    <div class="heading_container mt-5">
+        <h2>
+          <%= pagetitle %>
+        </h2>
+    </div>
+    <% if(typeof categories != 'undefined' && categories.length > 0){ %>
+    <div class="container-fluid">
+      <div class="row">
+        <%
+        categories.forEach(function(row, index){
+        %>
+        <div class="col-lg-4 col-md-4">
+          <div class="shop_container">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="shoe_img-box">
+                    <% 
+                    let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                    if(row.image !== null) {
+                      if(row.image){
+                        imgLink = row.image.path.replace(/\\/g, '/');
+                        imgLink= imgLink.split( 'public/' ).join( '/' );
+                      }
+                    }
+                    %>
+                  <img src="<%= imgLink %>" alt="">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <h3>
+                  <%= row.name %>
+                </h3>
+                <div>
+                    <a href="/category/<%= row.slug %>">
+                      View More
+                    </a>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </section>
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+
+  <%- include('./partials/footer-script') -%>
+</body>
+
+</html>

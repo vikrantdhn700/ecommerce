@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title><%= pagetitle %></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <%- include('./partials/head') -%>
+</head>
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Sidebar Start -->
+        <%- include('./partials/sidebar') -%>
+        <!-- Sidebar End -->
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <%- include('./partials/header-nav') -%>
+            <!-- Navbar End -->
+            <!-- Middle HTML Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-light rounded p-4">
+                            <div class="align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Billing Address</h6>
+                            </div>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_firstname %> <%= result.billinginfo[0].billing_lastname %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_email %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_phone %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_address %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_address2 %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_country %>, <%= result.billinginfo[0].billing_state %>, <%= result.billinginfo[0].billing_zip %></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-light rounded p-4">
+                            <div class="align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Shipping Address</h6>
+                            </div>
+                            <% if(result.shippinginfo == null){ %>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_firstname %> <%= result.billinginfo[0].billing_lastname %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_email %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_phone %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_address %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_address2 %></p>
+                            <p class="mb-2"><%= result.billinginfo[0].billing_country %>, <%= result.billinginfo[0].billing_state %>, <%= result.billinginfo[0].billing_zip %></p>
+                            <% } else { %>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_firstname %> <%= result.shippinginfo[0].shipping_lastname %></p>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_email %></p>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_phone %></p>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_address %></p>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_address2 %></p>
+                                <p class="mb-2"><%= result.shippinginfo[0].shipping_country %>, <%= result.shippinginfo[0].shipping_state %>, <%= result.shippinginfo[0].shipping_zip %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% if(result.cart_items.length > 0){ %>
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-8">
+                        <div class="bg-light text-center rounded p-4">
+                        <div class="table-responsive">
+                            <table class="table text-start align-middle mb-0 table-sm">
+                                <thead>
+                                    <tr class="text-dark">
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% result.cart_items.forEach(function(row, index){
+                                        let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                                        if(row.image !== null) {
+                                            if(row.image){
+                                                imgLink = row.image.replace(/\\/g, '/');
+                                                imgLink= imgLink.split( 'public/' ).join( '/' );
+                                            }
+                                        }
+                                    %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center py-3">
+                                                <a class="product-thumb" href="/product/detail/<%= row.slug %>"><img src="<%= imgLink %>" alt="Product" width="100"></a>
+                                                <div class="w-100 ms-3">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-0"><a href="/product/detail/<%= row.slug %>"><%= row.name %></a></h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="count-input">
+                                                <%= row.quantity %>
+                                            </div>
+                                        </td>
+                                        <td>$<% if(row.price && !row.price.$numberDecimal) { var price = row.price; } else if(row.price.$numberDecimal){ var price = row.price.$numberDecimal; } %><%= price * row.quantity %></td>
+                                    </tr>
+                                    <% }) %> 
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Subtotal: <span class="text-medium">$<%= result.total %></span></p></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-4">
+                        <div class="bg-light rounded p-4">
+                            <div class="align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Payment Detail</h6>
+                            </div>
+                            <form action="" method="post">
+                            <p>Payment type: <span class="text-medium"><%= result.paymenttype %></span></p>
+                            <p>Payment method: <span class="text-medium"><%= result.paymentmethod %></span></p>
+                            <p>Payment status: <span class="text-medium">
+                                <%= result.paymentstatus %>
+                                <select name="paymentstatus" class="form-select">
+                                    <option value="pending" <%= (result.paymentstatus == 'pending')? "selected" : '' %>>Pending</option>
+                                    <option value="failed" <%= (result.paymentstatus == 'failed')? "selected" : '' %>>Failed</option>
+                                    <option value="cancel" <%= (result.paymentstatus == 'cancel')? "selected" : '' %>>Cancel</option>
+                                    <option value="succeeded" <%= (result.paymentstatus == 'succeeded')? "selected" : '' %>>Succeeded</option>
+                                </select>
+                            </span></p>
+                            <% if(result.paymentmethod == 'stripe'){ %>
+                            <p>Customer id: <span class="text-medium"><%= result.customer_id %></span></p>
+                            <p>Payment id: <span class="text-medium"><%= result.payment_id %></span></p>
+                            <% } %>
+                            <p>Order status: <span class="text-medium">
+                                <%= result.orderstatus %>
+                                <select name="orderstatus" class="form-select">
+                                    <option value="pending" <%= (result.orderstatus == 'pending')? "selected" : '' %>>Pending</option>
+                                    <option value="failed" <%= (result.orderstatus == 'failed')? "selected" : '' %>>Failed</option>
+                                    <option value="cancel" <%= (result.orderstatus == 'cancel')? "selected" : '' %>>Cancel</option>
+                                    <option value="delivered" <%= (result.orderstatus == 'delivered')? "selected" : '' %>>Delivered</option>
+                                </select>
+                            </span></p>
+                            <p>Order date: <span class="text-medium"><%= result.createdAt %></span></p>
+                            <p><button type="submit" name="save" class="btn btn-secondary  w-100 m-2">Save</button></p>
+                            <input type="hidden" name="save_type" value="_updatepaymentstatus_nonce">
+                            <input type="hidden" name="nonce" value="<%= nonce %>">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <!-- Middle HTML End -->
+            <!-- Footer Start -->
+            <%- include('./partials/footer') -%>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>        
+    </div>   
+    <!-- JavaScript Libraries -->
+    <%- include('./partials/footer-script') -%>    
+</body>
+</html>

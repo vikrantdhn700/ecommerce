@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+</head>
+<%
+serializeObject = function(obj) {
+    var str = "";
+    for(var i = 0; i < Object.keys(obj).length; i++) {
+        key = Object.keys(obj)[i];
+        if (i === Object.keys(obj).length - 1)
+            str += encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]);
+        else
+            str += encodeURIComponent(key) + "=" +  encodeURIComponent(obj[key]) + "&";
+    }
+    return str;
+}
+%>
+<body>
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <section class="detail_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="heading_container text-center">
+            <h2>
+              <%= currcategory.name %>
+            </h2>
+            <%- currcategory.description %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>  
+  <% if(typeof products != 'undefined') { %>
+    <section class="detail_section">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="sidebar">
+                <h4>Filter Your Product</h4>
+                <form action="" method="GET">
+                  <% if(typeof categories != 'undefined'){ %>
+                  <div class="form-group">
+                    <label>Categories</label>
+                    <ul>
+                      <% categories.forEach(function(row, index){ %>
+                      <li><a href="/category/<%= row.slug %>"><%= row.name %></a></li>
+                      <% }) %>
+                    </ul>
+                  </div>
+                  <% } %>
+                  <div class="form-group">
+                    <input type="search" class="form-control" name="q" placeholder="Search..." value="<%= (queryString.q) ? queryString.q : '' %>">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="price-min">Price: <span id="amount"></span></label>                    
+                    <div id="slider-range"></div>
+                    <input type="hidden" name="pricefrom" value="<%= (queryString.pricefrom) ? queryString.pricefrom : '' %>"/>
+                    <input type="hidden" name="priceto" value="<%= (queryString.priceto) ? queryString.priceto : '' %>"/>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-info">Search</button>
+                  </div>
+                </form>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="product_container">
+              
+              <%
+                if(products.status == 'success' && products.results[0].data.length > 0){
+                  products.results[0].data.forEach(function(row, index){
+              %>
+              <a href="/product/detail/<%= row.slug %>">
+                <div class="product_box">
+                  <div class="product_img-box">
+                    <% 
+                      let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                      if(row.image !== null) {
+                        if(row.image){
+                          imgLink = row.image.path.replace(/\\/g, '/');
+                          imgLink= imgLink.split( 'public/' ).join( '/' );
+                        }
+                      }
+                    %>
+                    <img src="<%= imgLink %>" alt="" class="prodct-loop-img"/>
+                  </div>
+                  <div class="product_detail-box">
+                    <span>
+                      $<%= row.price %>
+                    </span>
+                    <p>
+                      <%= row.title %>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <% }) %>
+              
+              <% } else { %> 
+              <p>Sorry No product found</p>
+              <% } %>
+            </div>
+            <%  if(products.status == 'success' && products.results[0].pages > 0) { %>
+              <% 
+                  var key = "page";
+                  queryString[key] = null;
+                  delete queryString[key];
+                  delete queryString['cat'];
+                  var slctdQryString =  serializeObject(queryString) 
+                  var currPage = "/category/"+currcategory.slug;
+              %>
+              <div class="row">
+                <div class="col-md-12">
+                <ul class="pagination text-center">
+                    <% if (products.results[0].page == 1) { %>
+                        <li class="disabled page-item"><a class="page-link">First</a></li>
+                    <% } else { %>
+                        <li class="page-item"><a href="<%= currPage %>?page=1<%= `&${slctdQryString}` %>" class="page-link">First</a></li>
+                    <% } %>
+                    <% var i = (Number(products.results[0].page) > 5 ? Number(products.results[0].page) - 4 : 1) %>
+                    <% if (i !== 1) { %>
+                        <li class="disabled page-item"><a class="page-link">...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(products.results[0].page) + 4) && i <= products.results[0].pages; i++) { %>
+                        <% if (i == products.results[0].page) { %>
+                            <li class="active page-item"><a class="page-link"><%= i %></a></li>
+                        <% } else { %>
+                            <li class="page-item"><a href="<%= currPage %>?page=<%= i %><%= `&${slctdQryString}` %>" class="page-link"><%= i %></a></li>
+                        <% } %>
+                        <% if (i == Number(products.results[0].page) + 4 && i < products.results[0].pages) { %>
+                            <li class="disabled page-item"><a class="page-link">...</a></li>
+                        <% } %>
+                    <% } %>
+                    <% if (products.results[0].page == products.results[0].pages) { %>
+                        <li class="disabled page-item"><a class="page-link">Last</a></li>
+                    <% } else { %>
+                        <li class="page-item"><a href="<%= currPage %>?page=<%= products.results[0].pages %><%= `&${slctdQryString}` %>" class="page-link">Last</a></li>
+                    <% } %>
+                </ul>
+              </div>
+              </div>
+            <% }  %>
+          </div>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+  <%- include('./partials/footer-script') -%>
+  <% 
+    let priceFrom = (queryString.pricefrom) ? queryString.pricefrom : 0;
+    let priceTo = (queryString.priceto) ? queryString.priceto : minMaxPrice[0].maxPrice.toString();
+  %>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script>
+    $( function() {
+      $( "#slider-range" ).slider({
+        range: true,
+        min: 0,
+        max: '<%= minMaxPrice[0].maxPrice.toString(); %>',
+        values: [ '<%= priceFrom %>', '<%= priceTo %>' ],
+        slide: function( event, ui ) {
+          $( "#amount" ).text( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+          $("input[name='pricefrom']").val(ui.values[ 0 ]);
+          $("input[name='priceto']").val( ui.values[ 1 ]);
+        }
+      });
+      $( "#amount" ).text( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+        " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+     
+    } );
+    </script>
+</body>
+
+</html>

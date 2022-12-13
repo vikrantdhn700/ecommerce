@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css">
+</head>
+<body class="single-product">
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+    <%
+      serializeObject = function(obj) {
+          var str = "";
+          for(var i = 0; i < Object.keys(obj).length; i++) {
+              key = Object.keys(obj)[i];
+              if (i === Object.keys(obj).length - 1)
+                  str += encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]);
+              else
+                  str += encodeURIComponent(key) + "=" +  encodeURIComponent(obj[key]) + "&";
+          }
+          return str;
+      }
+    %>
+  </div>
+  <section class="detail_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="heading_container text-center">
+            <h2>
+                <%= pagetitle %>
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="container mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <p>Hi, <%= user.name %></p>
+            <div class="myaccount-sidebar">
+                <ul class="nav flex-column nav-pills">
+                    <li class="nav-item">
+                    <a class="nav-link" href="/auth/my-account">My Account</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link active" href="/auth/orders">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/auth/changepassword">Change Password</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-9">            
+            <% if(orders && orders[0].totalcount > 0){ %>
+            <table class="table table-sm mt-4">
+                <thead>
+                    <tr>
+                        <th>Slno</th>
+                        <th>#Order Id</th>
+                        <th>Order Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    orders[0].data.forEach(function(row, index){
+                    %>
+                    <tr>
+                        <td><%= (orders[0].limit * (orders[0].page - 1)) + index + 1 %></td>
+                        <td><%= row._id.toString(); %></td>
+                        <td><%= new Date(row.createdAt).toLocaleString() %></td>
+                        <td><%= row.orderstatus %></td>
+                        <td><a href="/auth/order/<%= row._id.toString(); %>">view</a></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table> 
+            <% } %>
+            <%  if(orders[0].pages != null && orders[0].pages > 0) { %>
+              <% 
+                  var key = "page";
+                  queryString[key] = null;
+                  var slctdQryString =  serializeObject(queryString) 
+                  var currPage = "/auth/orders/";
+              %>
+              <div class="row">
+                <div class="col-md-12">
+                <ul class="pagination text-center">
+                    <% if (orders[0].page == 1) { %>
+                        <li class="disabled page-item"><a class="page-link">First</a></li>
+                    <% } else { %>
+                        <li class="page-item"><a href="<%= currPage %>?page=1" class="page-link">First</a></li>
+                    <% } %>
+                    <% var i = (Number(orders[0].page) > 5 ? Number(orders[0].page) - 4 : 1) %>
+                    <% if (i !== 1) { %>
+                        <li class="disabled page-item"><a class="page-link">...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(orders[0].page) + 4) && i <= orders[0].pages; i++) { %>
+                        <% if (i == orders[0].page) { %>
+                            <li class="active page-item"><a class="page-link"><%= i %></a></li>
+                        <% } else { %>
+                            <li class="page-item"><a href="<%= currPage %>?page=<%= i %>" class="page-link"><%= i %></a></li>
+                        <% } %>
+                        <% if (i == Number(orders[0].page) + 4 && i < orders[0].pages) { %>
+                            <li class="disabled page-item"><a class="page-link">...</a></li>
+                        <% } %>
+                    <% } %>
+                    <% if (orders[0].page == orders[0].pages) { %>
+                        <li class="disabled page-item"><a class="page-link">Last</a></li>
+                    <% } else { %>
+                        <li class="page-item"><a href="<%= currPage %>?page=<%= orders[0].pages %>" class="page-link">Last</a></li>
+                    <% } %>
+                </ul>
+              </div>
+              </div>
+            <% }  %>
+        </div>
+    </div>
+  </div>
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+  <%- include('./partials/footer-script') -%>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
+  
+</body>
+</html>

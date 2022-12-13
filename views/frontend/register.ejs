@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+</head>
+<body class="login_pg">
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <section class="detail_section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="heading_container text-center">
+            <h2>
+                <%= pagetitle %>
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> 
+  <section class="vh-100">
+    <div class="container-fluid h-custom">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-md-9 col-lg-6 col-xl-5">
+          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+            class="img-fluid" alt="Sample image">
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+          <form action="" method="POST">
+            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+              <p class="lead fw-normal mb-0 me-3">Registration Here</p>
+            </div>
+            <div class="divider d-flex align-items-center my-4"></div>
+            <% if(typeof infomessages !== "undefined"){ %>
+                <%- infomessages %>
+            <% } %>
+            <% if(!isUserAuthenticated){ %>
+            <div class="form-outline mb-2">
+              <label class="form-label" for="name">Full Name</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Enter full name" />
+            </div>
+            <div class="form-outline mb-2">
+              <label class="form-label" for="email">Email address</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Enter a valid email address" />
+            </div>
+            <div class="form-outline mb-2">
+              <label class="form-label" for="phone">Phone</label>
+              <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter phone number" />
+            </div>
+            <div class="form-outline mb-2">
+              <label class="form-label" for="password">Password</label>
+              <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" />              
+            </div>
+            <div class="form-outline mb-2">
+              <label class="form-label" for="password">Confirm Password</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Enter password" />              
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="form-check mb-0">
+                <input class="form-check-input me-2" type="checkbox" value="1" id="tc" name="tc"/>
+                <label class="form-check-label" for="tc">I Accept <a href="#" target="_blank">terms & condition</a></label>
+              </div>
+            </div>
+  
+            <div class="text-center text-lg-start mt-4 pt-2">
+              <button type="submit" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Submit</button>
+              <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/auth/login" class="link-danger">Login</a></p>
+            </div>
+            <input type="hidden" name="save_type" value="_userregister_nonce">
+            <input type="hidden" name="nonce" value="<%= nonce %>">
+            <% } else { %>
+                <div class="alert alert-success">Hi, You have already loggedin.<br> <a href="/auth/logout">Click here to logout</a></div>
+            <% } %>  
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+  <%- include('./partials/footer-script') -%>
+</body>
+</html>

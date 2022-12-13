@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title><%= pagetitle %></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <%- include('./partials/head') -%>
+</head>
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Sidebar Start -->
+        <%- include('./partials/sidebar') -%>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <%- include('./partials/header-nav') -%>
+            <!-- Navbar End -->
+
+            <!-- Middle HTML Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4"><%= pagetitle %></h6>
+                            <% if(typeof infomessages !== "undefined"){ %>
+                                <%- infomessages %>
+                            <% } %>
+                            <form action="" method="POST" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" value="<%= result.title %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description"><%= result.description %></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="text" class="form-control" id="price" name="price" value="<%= result.price %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select class="form-select" id="category" name="category">
+                                        <option value="">Select</option>
+                                        <%  
+                                            const catId = result.category.toString();
+                                            if(typeof categories != 'undefined' && categories.length > 0){
+                                                categories.forEach(function(row, index){
+                                            %>
+                                            <option value="<%= row._id %>" <%= (row._id == catId)? 'selected' : '' %>><%= row.name %></option>
+                                            <%        
+                                                })
+                                            }
+                                        %>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Image</label>
+                                    <input type="file" class="form-control mb-2" id="image" name="image">
+                                    <div id="imgbox">
+                                    <% 
+                                        if(result.image !== null) {
+                                            if(result.image){
+                                                let imgLink = result.image.path.replace(/\\/g, '/');
+                                                imgLink= imgLink.split( 'public/' ).join( '/' );
+                                                %>
+                                                <a href="<%= imgLink %>" target="_blank">
+                                                    <img src="<%= imgLink %>" width="80"/>
+                                                    <small><%= result.image.originalname %></small>
+                                                </a>
+                                                <br>
+                                                <a href="#" id="removeImg" style="color: red;" data-image="<%= result.image._id.toString() %>" data-id="<%= result._id.toString() %>"><small><i class="fa fa-times"></i> remove</small></a>
+                                                <%
+                                            }
+                                        }
+                                    %>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Product</button>
+                                <input type="hidden" name="save_type" value="_updateproduct_nonce">
+                                <input type="hidden" name="nonce" value="<%= nonce %>">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Middle HTML End -->
+
+
+            <!-- Footer Start -->
+            <%- include('./partials/footer') -%>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+   
+    <!-- JavaScript Libraries -->
+    <%- include('./partials/footer-script') -%>
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#description' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+
+        document.getElementById('removeImg').addEventListener('click', async (event) => {
+            event.preventDefault();
+            let image = event.currentTarget.getAttribute("data-image");
+            let id = event.currentTarget.getAttribute("data-id");
+            try{
+                let response = await fetch('<%= process.env.SITE_URL %>/admin/product/image/delete/'+id+'/'+image, {
+                    method: 'DELETE',
+                }).then((response)=> response.json())
+                .then((data) => {
+                    if(data.status=="success"){
+                        let firstparent = event.target.parentElement.id;
+                        let mainparent = document.getElementById(firstparent).parentElement.id;
+                        document.getElementById(mainparent).innerHTML= "";
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            } catch(error) {
+                console.log(error);
+            }
+        });
+            
+    </script>
+</body>
+
+</html>

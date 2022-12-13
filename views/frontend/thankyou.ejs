@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+</head>
+<body class="single-product">
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <section class="checkout_section my-5">
+    <div class="container">    
+        <div class="row">
+          <% 
+          if(order!= null){ 
+            let orderID = order._id.toString(); 
+          %>
+            <div class="jumbotron text-center col-md-12">
+                <h1 class="display-3">Thank You!</h1>
+                <p class="lead"><strong>Your order #<%= orderID %></strong> successfully processed.</p>
+                <hr>
+                <table class="table table-sm">
+                  <tbody>
+                    <tr>
+                      <th>Order Id</th><td><%= orderID %></td>
+                    </tr>
+                    <tr>
+                      <th>Payment Method</th><td><%= order.paymentmethod %></td>
+                    </tr>
+                    <tr>
+                      <th>Payment Status</th><td><%= order.paymentstatus %></td>
+                    </tr>
+                    <tr>
+                      <th>Total Amount</th><td>$<%= order.total %></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="lead">
+                  <a class="btn btn-primary btn-sm" href="/" role="button">Continue to homepage</a>
+                </p>
+            </div>
+            <% } else { %>
+              <div class="jumbotron text-center col-md-12">
+                <h1 class="display-3">Sorry!</h1>
+                <p class="lead"><strong>Your order </strong> has not processed.</p>
+              </div>
+            <% } %>
+        </div>
+    </div>
+  </section>
+  <!-- footer section -->
+<%- include('./partials/footer') -%>
+<%- include('./partials/footer-script') -%>
+</body>
+</html>

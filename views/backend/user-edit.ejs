@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title><%= pagetitle %></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <%- include('./partials/head') -%>
+</head>
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Sidebar Start -->
+        <%- include('./partials/sidebar') -%>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <%- include('./partials/header-nav') -%>
+            <!-- Navbar End -->
+
+            <!-- Middle HTML Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4"><%= pagetitle %></h6>
+                            <% if(typeof infomessages !== "undefined"){ %>
+                                <%- infomessages %>
+                            <% } %>
+                            <form action="" method="POST">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="<%= result.name %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="<%= result.email %>" readonly="true">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="number" class="form-control" id="phone" name="phone" value="<%= result.phone %>">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update User</button>
+                                <input type="hidden" name="save_type" value="_edituser_nonce">
+                                <input type="hidden" name="nonce" value="<%= nonce %>">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Middle HTML End -->
+
+
+            <!-- Footer Start -->
+            <%- include('./partials/footer') -%>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+   
+    <!-- JavaScript Libraries -->
+    <%- include('./partials/footer-script') -%>
+</body>
+
+</html>

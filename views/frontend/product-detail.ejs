@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title><%= pagetitle %></title>
+  <%- include('./partials/head') -%>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css">
+</head>
+<body class="single-product">
+  <div class="hero_area">
+    <%- include('./partials/header') -%>
+  </div>
+  <div class="container-fliud">
+        <div class="card">
+            <div class="container-fliud">
+                <div class="wrapper row">
+                    <div class="preview col-md-6">
+                        <div class="preview-pic tab-content">
+                        <div class="tab-pane active" id="pic-1">
+                            <% 
+                            let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                                if(product.image !== null) {
+                                    if(product.image){
+                                        imgLink = product.image.path.replace(/\\/g, '/');
+                                        imgLink= imgLink.split( 'public/' ).join( '/' );
+                                    }
+                                }
+                            %>
+                            <img src="<%= imgLink %>" alt="" />
+                        </div>
+                        </div>
+                        
+                    </div>
+                    <div class="details col-md-6">
+                        <h3 class="product-title"><%= product.title %></h3>
+                        <div class="product-description"><%- product.description %></div>
+                        <% if(product.price){ %><h4 class="price">price: <span>$<%= product.price %></span></h4><% } %>
+                        <% if(product.category){ %><p class="vote"><strong>Category</strong> <a href="/category/<%= product.category.slug %>"><%= product.category.name %></a></p><% } %>
+                        <!-- <h5 class="sizes">sizes:
+                            <span class="size" data-toggle="tooltip" title="small">s</span>
+                            <span class="size" data-toggle="tooltip" title="medium">m</span>
+                            <span class="size" data-toggle="tooltip" title="large">l</span>
+                            <span class="size" data-toggle="tooltip" title="xtra large">xl</span>
+                        </h5>
+                        <h5 class="colors">colors:
+                            <span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
+                            <span class="color green"></span>
+                            <span class="color blue"></span>
+                        </h5> -->
+                        <form action="" method="POST" class="cart_form">
+                            <div class="action row gy-2 gx-3 align-items-center">
+                                <div class="col-auto">
+                                    <label class="" for="qty">Qty</label>
+                                    <input type="number" name="qty" id="qty" min="1" value="1" class="form-control" style="width: 100px;"/>
+                                    <input type="hidden" name="product_id" value="<%= product._id.toString() %>"/>
+                                </div>
+                                <div class="col-auto"><button class="add-to-cart btn btn-default add_to_cart" type="submit">add to cart</button></div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+  <% if(relatedProduct.length > 0 && typeof relatedProduct != 'undefined'){ %>
+  <div class="bbb_viewed">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+               <div class="bbb_main_container">
+                <div class="bbb_viewed_title_container">
+                    <h3 class="bbb_viewed_title">Related products</h3>
+                    <div class="bbb_viewed_nav_container">
+                        <div class="bbb_viewed_nav bbb_viewed_prev"><i class="fas fa-chevron-left"></i></div>
+                        <div class="bbb_viewed_nav bbb_viewed_next"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                <div class="bbb_viewed_slider_container">
+                    <div class="owl-carousel owl-theme bbb_viewed_slider">
+                        <% relatedProduct.forEach(function(row, index){
+                            let imgLink = `${process.env.SITE_URL}/backend/img/noImageFound.png`;
+                            if(row.image !== null) {
+                                if(row.image){
+                                imgLink = row.image.path.replace(/\\/g, '/');
+                                imgLink= imgLink.split( 'public/' ).join( '/' );
+                                }
+                            }
+                         %>
+                        <div class="owl-item">
+                            <div class="bbb_viewed_item d-flex flex-column align-items-center justify-content-center text-center">
+                                <div class="bbb_viewed_image"><a href="<%= `${process.env.SITE_URL}/product/detail/${row.slug}` %>"><img src="<%= imgLink %>" alt="" class="related-prodctimg"></a></div>
+                                <div class="bbb_viewed_content text-center">
+                                    <div class="bbb_viewed_price">$<%= row.price %></div>
+                                    <div class="bbb_viewed_name"><a href="<%= `${process.env.SITE_URL}/product/detail/${row.slug}` %>"><%= row.title %></a></div>
+                                </div>
+                                <ul class="item_marks">
+                                    <li class="item_mark item_discount">-25%</li>
+                                    <li class="item_mark item_new">new</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+               </div> 
+            </div>
+        </div>
+    </div>
+  </div>
+  <% } %>
+  <!-- footer section -->
+  <%- include('./partials/footer') -%>
+  <!-- footer section -->
+  <%- include('./partials/footer-script') -%>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
+  
+</body>
+</html>

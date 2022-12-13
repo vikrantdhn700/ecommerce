@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.alert-container {
+    position: fixed;
+    top: 30px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    right: 10px;
+}
+
+@media only screen and (min-width: 600px) {
+    .alert-container {
+        width: 400px;
+    }
+}
+
+.modal-alert {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    display: none;
+    padding: 20px 15px;
+    border-radius: 8px;
+    position: relative;
+}
+
+
+.modal-alert .content {
+    display: flex;
+    align-items: center;
+}
+
+.modal-alert .content svg {
+    opacity: 0.9;
+    margin: 0 10px;
+}
+
+.modal-alert h6 {
+    opacity: 0.9;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.modal-alert .bar {
+    height: 2px;
+    left: 8px;
+    bottom: 0px;
+    background: rgb(255, 231, 15);
+    position: absolute;
+    border-radius: 4px 4px 0 0;
+}
+
+.progress {
+    animation: alertProgress 5s ease;
+}
+
+@keyframes alertProgress {
+    from {
+        width: 90%;
+    }
+    to {
+        width: 0;
+    }
+}
