@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(bodyParser.json({extended:true}));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieParser());
-//app.use(cors());
+app.use(cors());
 app.use(session({
   secret: process.env.JWT_SECRET_KEY,
   resave: false,
