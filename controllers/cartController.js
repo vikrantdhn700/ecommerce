@@ -1,6 +1,7 @@
 import path from "path";
 import session from "express-session";
 import productModel from "../models/productModel.js";
+import fileModel from "../models/fileModel.js";
 import cartModel from "../models/cartModel.js";
 
 export const getUserCart= async (request,response) => {
@@ -206,8 +207,7 @@ export const updateCart = async (request, response) => {
         const qty = qtyArray[index];
         if(qty <= 0){
           qty = 1;
-        }
-        
+        }        
         const price = product.price;
         const name = product.title;        
         const quantity = parseInt(qty);
