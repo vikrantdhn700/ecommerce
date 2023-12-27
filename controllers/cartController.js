@@ -198,8 +198,8 @@ export const updateCart = async (request, response) => {
       returnCons += "Cart " + cart
       let counter = 1;
       productIdArray.forEach(async function(productId, index){ 
-        returnCons += "ProductID " + productId + " Indx " + index
         const product = await productModel.findOne({ _id: productId }).populate('image','path').exec();
+        returnCons += "Product " + product
         if (!product) {
             return response.status(404).send({"status" : "error", "message": "product not found"});
         }
@@ -207,7 +207,7 @@ export const updateCart = async (request, response) => {
         if(qty <= 0){
           qty = 1;
         }
-        returnCons += "Product " + product
+        
         const price = product.price;
         const name = product.title;        
         const quantity = parseInt(qty);
