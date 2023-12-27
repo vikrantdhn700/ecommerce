@@ -116,7 +116,7 @@ document.querySelectorAll('#cart_form_update').forEach(item => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-            }).then((response)=> response.json())
+            }).then((response) => { console.log(response); response.json() })
             .then((data) => {
                 if(data.status=="success"){
                     triggerAlert(data.message,'success');
