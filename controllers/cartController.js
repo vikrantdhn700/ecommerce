@@ -224,6 +224,7 @@ export const updateCart = async (request, response) => {
                 return acc + curr.quantity * price;
               },0)
               cart.items[itemIndex] = productCart;
+              console.log("BEFORE counter " + cart.items.length +" "+ counter)
               if(cart.items.length == counter){
                 const newCart = cart;
                 request.session.cart = newCart;
