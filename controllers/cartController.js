@@ -180,6 +180,7 @@ export const updateCart = async (request, response) => {
   try {
     const qtyArray = qty.split(",");
     const productIdArray = product_id.split(",");
+    console.log("QTY " + qtyArray +" ProductArr - "+ productIdArray)
     if(productIdArray != null && productIdArray){      
       let cart = null;   
       if(request.session.isUserAuthenticated){ 
@@ -193,6 +194,7 @@ export const updateCart = async (request, response) => {
       } else {
         cart = request.session.cart;
       }
+      console.log("Cart " + cart)
       let counter = 1;
       productIdArray.forEach(async function(productId, index){         
         const product = await productModel.findOne({ _id: productId }).populate('image','path').exec();
@@ -203,6 +205,7 @@ export const updateCart = async (request, response) => {
         if(qty <= 0){
           qty = 1;
         }
+        console.log("Product " + product)
         const price = product.price;
         const name = product.title;        
         const quantity = parseInt(qty);
@@ -215,6 +218,7 @@ export const updateCart = async (request, response) => {
               productCart.quantity = quantity;
               productCart.image = image;
               productCart.slug = slug;
+              console.log("BEfore REduce " + product)
               cart.total = cart.items.reduce((acc, curr) => {
                 if(curr.price && !curr.price.$numberDecimal) { 
                   var price = curr.price; 
@@ -223,6 +227,7 @@ export const updateCart = async (request, response) => {
                 }
                 return acc + curr.quantity * price;
               },0)
+              console.log("After Reduce " + cart.total)
               cart.items[itemIndex] = productCart;
               console.log("BEFORE counter " + cart.items.length +" "+ counter)
               if(cart.items.length == counter){
