@@ -70,6 +70,7 @@ export const saveCartToUser = async (request, response) => {
     const userId = response.locals.user._id.toString();
     const cartUser = await cartModel.findOne({ user : userId });
     const cartItems = JSON.stringify(request.session.cart);
+    console.log("Update Before 1")
     if(cartUser != null && cartUser){
       console.log("Update Before")
       await cartModel.findOneAndUpdate({ user : userId }, {cart_items : cartItems});
