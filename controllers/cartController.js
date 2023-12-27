@@ -49,7 +49,7 @@ export const deleteCart= async (request,response) => {
                     },0)
         request.session.cart = cart;
         if(response.locals.isUserAuthenticated){
-          saveCartToUser(request,response);
+          await saveCartToUser(request,response);
         }
         return response.status(200).send({"status" : "success", "message": "Success", "result": cart});
       } else {
@@ -132,7 +132,7 @@ export const addToCart = async (request,response) => {
                 cart.items[itemIndex] = productCart;
                 request.session.cart = cart;
                 if(response.locals.isUserAuthenticated){
-                  saveCartToUser(request,response);
+                  await saveCartToUser(request,response);
                 }
                 return response.status(200).send({"status" : "success", "message": "Added to cart", "result": cart});
             } else {
@@ -147,7 +147,7 @@ export const addToCart = async (request,response) => {
                             },0)
                 request.session.cart = cart;
                 if(response.locals.isUserAuthenticated){
-                  saveCartToUser(request,response);
+                  await saveCartToUser(request,response);
                 }
                 return response.status(200).send({"status" : "success", "message": "Added to cart", "result": cart});
             }
@@ -159,7 +159,7 @@ export const addToCart = async (request,response) => {
                 };
             request.session.cart = newCart;
             if(response.locals.isUserAuthenticated){
-              saveCartToUser(request,response);
+              await saveCartToUser(request,response);
             }
             return response.status(201).send({"status" : "success", "message": "Added to cart", "result": newCart});
         }
