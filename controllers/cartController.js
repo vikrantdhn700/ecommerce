@@ -60,18 +60,20 @@ export const deleteCart= async (request,response) => {
     }
 };
 
-export const viewCart = async(request, response) => {
+export const viewCart = async (request, response) => {
   let data = {"pagetitle" : "Cart"};
   return response.render("frontend/cart",data);
 }
 
-export const saveCartToUser = async(request, response) => {
+export const saveCartToUser = async (request, response) => {
   if(response.locals.isUserAuthenticated && request.session.cart){
     const userId = response.locals.user._id.toString();
     const cartUser = await cartModel.findOne({ user : userId });
     const cartItems = JSON.stringify(request.session.cart);
     if(cartUser != null && cartUser){
+      console.log("Update Before")
       await cartModel.findOneAndUpdate({ user : userId }, {cart_items : cartItems});
+      console.log("Update After")
     } else {
       await cartModel.create({
         user : userId,
@@ -169,7 +171,7 @@ export const addToCart = async (request,response) => {
       }
 }
 
-export const updateCart = async(request, response) => {
+export const updateCart = async (request, response) => {
   const { product_id, qty } = request.body;
   if(!qty || !product_id){
     return response.status(404).send({"status" : "failed", "message": "Invalid product id Or Quantity"});
