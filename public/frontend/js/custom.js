@@ -119,8 +119,8 @@ document.querySelectorAll('#cart_form_update').forEach(item => {
             }).then((response)=> response.json())
             .then((data) => {
                 if(data.status=="success"){
-                    //triggerAlert(data.message,'success');
-                    window.location.href = site_url+"/cart";                
+                    triggerAlert(data.message,'success');
+                    //window.location.href = site_url+"/cart";                
                 } else {
                     triggerAlert(data.message,'error');
                 }
