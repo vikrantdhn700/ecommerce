@@ -197,13 +197,13 @@ export const updateCart = async (request, response) => {
         cart = request.session.cart;
       }
       //returnCons += "Cart " + cart
-      let product = await productModel.findById('63466845c7658d8456a18807').select('-admin_id').populate('image','originalname path').exec();
-      returnCons += "Product " + product
+      //let product = await productModel.findById('63466845c7658d8456a18807').select('-admin_id').populate('image','originalname path').exec();
+      //returnCons += "Product " + product
 
       let counter = 1;
       productIdArray.forEach(async function(productId, index){ 
         let product = await productModel.findById(productId).select('-admin_id').populate('image','originalname path').exec();
-        returnCons += "Product " + product
+        //returnCons += "Product " + product
         if (!product) {
             return response.status(404).send({"status" : "error", "message": "product not found"});
         }
@@ -246,8 +246,8 @@ export const updateCart = async (request, response) => {
           }
         }
       })      
-      //return response.status(201).send({"status" : "success", "message": "Added to cart", "result": cart});
-      return response.status(201).send({"status" : "success", "message": "Cart updated", "result": returnCons});
+      return response.status(201).send({"status" : "success", "message": "Cart updated", "result": cart});
+      //return response.status(201).send({"status" : "success", "message": "Cart updated", "result": returnCons});
     }
   } catch (error) {
     console.log(error.message);
