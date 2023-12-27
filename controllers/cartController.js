@@ -182,7 +182,7 @@ export const updateCart = async (request, response) => {
   try {
     const qtyArray = qty.split(",");
     const productIdArray = product_id.split(",");
-    returnCons += "QTY " + qtyArray +" ProductArr - "+ productIdArray
+    //returnCons += "QTY " + qtyArray +" ProductArr - "+ productIdArray
     if(productIdArray != null && productIdArray){      
       let cart = null;   
       if(request.session.isUserAuthenticated){ 
@@ -196,7 +196,10 @@ export const updateCart = async (request, response) => {
       } else {
         cart = request.session.cart;
       }
-      returnCons += "Cart " + cart
+      //returnCons += "Cart " + cart
+      let product = await productModel.findById('63466845c7658d8456a18807').select('-admin_id').populate('image','originalname path').exec();
+      returnCons += "Product " + product
+
       let counter = 1;
       productIdArray.forEach(async function(productId, index){ 
         let product = await productModel.findById(productId).select('-admin_id').populate('image','originalname path').exec();
