@@ -225,7 +225,7 @@ export const updateCart = async(request, response) => {
                 const newCart = cart;
                 request.session.cart = newCart;
                 if(response.locals.isUserAuthenticated){
-                  saveCartToUser(request,response);
+                  await saveCartToUser(request,response);
                 }
               }   
               counter++;           
