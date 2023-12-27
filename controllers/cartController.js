@@ -49,7 +49,7 @@ export const deleteCart= async (request,response) => {
                     },0)
         request.session.cart = cart;
         if(response.locals.isUserAuthenticated){
-          saveCartToUser(request,response);
+          await saveCartToUser(request,response);
         }
         return response.status(200).send({"status" : "success", "message": "Success", "result": cart});
       } else {
