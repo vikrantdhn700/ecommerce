@@ -242,7 +242,8 @@ export const updateCart = async (request, response) => {
           }
         }
       })      
-      return response.status(201).send({"status" : "success", "message": "Added to cart", "result": cart});
+      //return response.status(201).send({"status" : "success", "message": "Added to cart", "result": cart});
+      return response.status(201).send({"status" : "success", "message": "Cart updated", "result": returnCons});
     }
   } catch (error) {
     console.log(error.message);
