@@ -204,7 +204,7 @@ export const updateCart = async (request, response) => {
       productIdArray.forEach(async function(productId, index){ 
         let product = await productModel.findById(productId).select('-admin_id').populate('image','originalname path').exec();
         //returnCons += "Product " + product
-        if (!product) {
+        if (!product || product == null || product == undefined) {
             return response.status(404).send({"status" : "error", "message": "product not found"});
         }
         const qty = qtyArray[index];
