@@ -199,7 +199,7 @@ export const updateCart = async (request, response) => {
       returnCons += "Cart " + cart
       let counter = 1;
       productIdArray.forEach(async function(productId, index){ 
-        const product = await productModel.findOne({ _id: productId }).populate('image','path').exec();
+        const product = await productModel.findOne({ _id: productId }).populate('image').exec();
         returnCons += "Product " + product
         if (!product) {
             return response.status(404).send({"status" : "error", "message": "product not found"});
